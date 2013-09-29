@@ -1,3 +1,17 @@
+* kossy-memo-sample
+  ブラウザで動くTODOリスト．
+
+** 使い方
+   #+BEGIN_SRC sh
+$ carton install
+$ vi lib/KossyMemoSample/Config.pm  # MySQL接続パラメータを設定
+$ # mysql 起動
+$ mysql -u [ユーザ名] [DB名] < db/init.sql
+$ carton exec -- plackup -r -E production app.psgi
+$ firefox localhost:5000
+   #+END_SRC
+
+
 * fixme
   *コードにも埋め込んでる*
   - 空のTODOも入れられてしまう

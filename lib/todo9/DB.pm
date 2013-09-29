@@ -16,21 +16,6 @@ sub _get_dbh {
     return $dbh
 };
 
-sub _create_schema {
-    my $dbh = _get_dbh();
-    my $table = config->param('table');
-
-    my $ddl = <<"EOS";
-create table if not exists $table (
-  id INTEGER PRIMARY KEY AUTO_INCREMENT,  -- always 1 since up to 1 row exists
-  content TEXT not null,
-  last_update DATETIME not null
-) DEFAULT CHARSET=utf8;
-EOS
-
-    $dbh->do($ddl) or die 'cannot create table';
-};
-
 sub _add {
     my $content = shift;
     my $dbh = _get_dbh();
@@ -45,7 +30,6 @@ sub _add {
 
 sub add_todo {
     my $content = shift;
-    _create_schema();
     _add($content);
 };
 
@@ -55,8 +39,6 @@ sub read_todos {
     my $n_fetch = shift;
     my $dbh = _get_dbh();
     my $table = config->param('table');
-
-    _create_schema();
 
     my $rows = $dbh->selectall_arrayref("select * from $table limit $n_fetch");
     if ($rows) { return $rows; }
@@ -69,8 +51,6 @@ sub fetch_todo_by_id {
     my $id = shift;
     my $dbh = _get_dbh();
     my $table = config->param('table');
-
-    _create_schema();
 
     my $sth = $dbh->prepare("select * from $table where id=$id");
     $sth->execute();
@@ -88,8 +68,6 @@ sub edit_todo_by_id {
     my $dbh = _get_dbh();
     my $table = config->param('table');
 
-    _create_schema();
-
     my $sth = $dbh->prepare("update $table set content=? where id=$id");
     $sth->execute($content);
 };
@@ -100,8 +78,6 @@ sub delete_todo_by_id {
     my $id = shift;
     my $dbh = _get_dbh();
     my $table = config->param('table');
-
-    _create_schema();
 
     my $sth = $dbh->prepare("delete from $table where id=$id");
     $sth->execute();

@@ -1,0 +1,20 @@
+: cascade base
+: around content -> {
+<h1>kossy-memo-sample</h1>
+<p>保存できるメモ帳です．次回アクセス時にあなたのメモが見られるとは限りません :P</p>
+
+content <: $content :>
+last <: $last_update :>
+
+<form action="/todos/<: $id :>" method="post">
+  <input type="text" name="todo" value="<: $content :>" />
+  <input name="submit-btn" type="submit" value="保存" />
+</form>
+
+<form action="/todos/<: $id :>/delete" method="post">
+  <input type="hidden" name="todo" value="DELETE" />
+  <input name="submit-btn" type="submit" value="削除" />
+</form>
+
+
+: }
