@@ -9,7 +9,7 @@ config development => +{
     host => $ENV{DB_HOST} || "localhost",  # 0.0.0.0:3306
     user => $ENV{DB_USER} || "root",
     pass => $ENV{DB_PASS} || "",
-    table => $ENV{DB_TABLE} || "memo",
+    table => $ENV{DB_TABLE} || "todos",
 };
 
 config production => +{
@@ -17,7 +17,7 @@ config production => +{
     host => $ENV{DB_HOST} || "localhost",  # 0.0.0.0:3306
     user => $ENV{DB_USER} || "root",
     pass => $ENV{DB_PASS} || "",
-    table => $ENV{DB_TABLE} || "memo",
+    table => $ENV{DB_TABLE} || "todos",
 };
 
 1;
