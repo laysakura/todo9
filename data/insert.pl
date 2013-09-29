@@ -16,6 +16,7 @@ sub _get_dbh {
         sprintf("dbi:mysql:%s:%s", $db, $host),
         $user,
         $pass,
+        { mysql_enable_utf8 => 1 }
     ) or die 'connection failed';
     return $dbh
 };
@@ -24,9 +25,10 @@ sub _get_dbh {
 while (my $line = <STDIN>) {
     chomp $line;
 
-    # my $dbh = _get_dbh();
-    # my $sth = $dbh->prepare("insert into $table (content, last_update) values (?, now());");
-    # $sth->execute($line) or die 'cannot replace the row';;
+    # FIXME: 何故かUTF8でinsertできない・・・
+    my $dbh = _get_dbh();
+    my $sth = $dbh->prepare("insert into $table (content, last_update) values (?, now());");
+    $sth->execute($line) or die 'cannot replace the row';;
 
-    `mysql -u $user $db -e "insert into $table (content, last_update) values ('$line', now());"`
+    # `mysql -u $user $db -e "insert into $table (content, last_update) values ('$line', now());"`
 }
