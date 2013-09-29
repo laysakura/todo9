@@ -4,8 +4,8 @@
 <p>保存できるメモ帳です．次回アクセス時にあなたのメモが見られるとは限りません :P</p>
 
 <form action="/" method="post">
-  <input type="text" name="todo" placeholder="TODOを記述" />
-  <input name="submit-btn" type="submit" value="保存" />
+  <input type="text" id="todo-box" name="todo" placeholder="TODOを記述" />
+  <input id="todo-submit-btn" name="submit-btn" type="submit" value="保存" disabled="true" />
 </form>
 
 

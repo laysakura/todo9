@@ -42,7 +42,6 @@ get '/todos/:id' => sub {
 
     my $id = $c->args->{id};
     my @todo = todo9::DB::fetch_todo_by_id($id) or die 'DB select error';
-#    die Dumper $todo[1];
     $c->render('edit.tx',
                {
                    id => $id,
