@@ -37,5 +37,18 @@ post '/' => sub {
     return $c->res;
 };
 
+get '/todos/:id' => sub {
+    my ( $self, $c ) = @_;
+
+    my $id = $c->args->{id};
+    my @todo = todo9::DB::fetch_todo_by_id($id) or die 'DB select error';
+    # die Dumper @todo;
+    $c->render('edit.tx',
+               {
+                   content => $todo[1],
+                   last_update => $todo[2],
+               });
+};
+
 1;
 

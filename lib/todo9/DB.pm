@@ -63,4 +63,20 @@ sub read_todos {
     else { return undef; }
 };
 
+# @param  id of row to fetch
+# @returns  [id, todo, datetime], undef if not found
+sub fetch_todo_by_id {
+    my $id = shift;
+    my $dbh = _get_dbh();
+    my $table = config->param('table');
+
+    _create_schema();
+
+    my $sth = $dbh->prepare("select * from $table where id=$id");
+    $sth->execute();
+    my @row = $sth->fetchrow_array;
+
+    return @row;
+};
+
 1;
