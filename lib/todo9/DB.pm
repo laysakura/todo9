@@ -34,47 +34,6 @@ sub add_todo {
     _add($content);
 };
 
-# @param  max number of todos to fetch
-# @returns  [ [id, todo1, datetime], [ ... ], ...]
-sub read_todos {
-    my $n_fetch = shift;
-    my $dbh = _get_dbh();
-    my $table = config->param('table');
-
-    my $rows = $dbh->selectall_arrayref("select * from $table limit $n_fetch");
-    if ($rows) { return $rows; }
-    else { return undef; }
-};
-
-# @param  id of row to fetch
-# @returns  [id, todo, datetime], undef if not found
-sub fetch_todo_by_id {
-    my $id = shift;
-    my $dbh = _get_dbh();
-    my $table = config->param('table');
-
-    my $sth = $dbh->prepare("select * from $table where id=$id");
-    $sth->execute();
-    my @row = $sth->fetchrow_array;
-
-    return @row;
-};
-
-# @param  query
-# @param  id of row to fetch
-# @returns  [id, todo, datetime], undef if not found
-sub fetch_todos_by_query {
-    my $query = shift;
-    my $id = shift;
-    my $dbh = _get_dbh();
-    my $table = config->param('table');
-
-    my $sql = "SELECT * FROM $table WHERE MATCH(content) AGAINST('+\"$query\"' IN BOOLEAN MODE)";
-    my $rows = $dbh->selectall_arrayref($sql);
-    if ($rows) { return $rows; }
-    else { return undef; }
-};
-
 # @param  id of row to fetch
 # @param  content
 # @returns  [id, todo, datetime], undef if not found
@@ -97,6 +56,14 @@ sub delete_todo_by_id {
 
     my $sth = $dbh->prepare("delete from $table where id=$id");
     $sth->execute();
+};
+
+# @param  SQL query
+# @returns  [ [col, col, ...], [...], ... ]
+sub select {
+    my $query = shift;
+    my $dbh = _get_dbh();
+    $dbh->selectall_arrayref($query);
 };
 
 1;

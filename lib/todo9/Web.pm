@@ -8,11 +8,12 @@ use todo9::DB;
 use Data::Dumper;
 use todo9::Config;
 
+my $table = config->param('table');
 
 get '/' => sub {
     my ( $self, $c )  = @_;
 
-    my $todos = todo9::DB::read_todos(10) or die 'DB select error';
+    my $todos = todo9::DB::select("select * from $table limit 10");
     $c->render('index.tx',
                {
                    todos => $todos,
@@ -41,12 +42,12 @@ get '/todos/:id' => sub {
     my ( $self, $c ) = @_;
 
     my $id = $c->args->{id};
-    my @todo = todo9::DB::fetch_todo_by_id($id) or die 'DB select error';
+    my $todos = todo9::DB::select("select * from $table where id=$id limit 1");
     $c->render('edit.tx',
                {
                    id => $id,
-                   content => $todo[1],
-                   last_update => $todo[2],
+                   content => $todos->[0][1],
+                   last_update => $todos->[0][2],
                });
 };
 
@@ -84,12 +85,11 @@ get '/search_result' => sub {
         }]);
     my $query = $opt->valid->get('q');
 
-    my $todos = todo9::DB::fetch_todos_by_query($query, 10000) or die 'DB select error';
-    die Dumper $todos;
+    my $todos = todo9::DB::select("select * from $table where match(content) against('+\"$query\"' in boolean mode) limit 20");
     $c->render('search_result.tx',
                {
                    query => $query,
-                   len_results => @$todos,
+                   len_results => scalar(@{$todos}),
                    todos => $todos,
                });
 };
