@@ -17,46 +17,14 @@ sub _get_dbh {
     return $dbh
 };
 
-sub _add {
-    my $content = shift;
+# @param  DML SQL
+# @param  ['placeholder1', 'placeholder2', ... ]
+sub dml {
+    my ($dml, $placeholders) = @_;
     my $dbh = _get_dbh();
-    my $table = config->param('table');
-
-    my $sth = $dbh->prepare("insert into $table (content, last_update) values (?, now());");
-    $sth->execute($content) or die 'cannot replace the row';
-    $sth->finish;
-
-    $dbh->disconnect;
-};
-
-sub add_todo {
-    my $content = shift;
-    _add($content);
-};
-
-# @param  id of row to fetch
-# @param  content
-# @returns  [id, todo, datetime], undef if not found
-sub edit_todo_by_id {
-    my $id = shift;
-    my $content = shift;
-    my $dbh = _get_dbh();
-    my $table = config->param('table');
-
-    my $sth = $dbh->prepare("update $table set content=? where id=$id");
-    $sth->execute($content);
-};
-
-# @param  id of row to delete
-# @returns  [id, todo, datetime], undef if not found
-sub delete_todo_by_id {
-    my $id = shift;
-    my $dbh = _get_dbh();
-    my $table = config->param('table');
-
-    my $sth = $dbh->prepare("delete from $table where id=$id");
-    $sth->execute();
-};
+    my $sth = $dbh->prepare($dml);
+    $sth->execute(@$placeholders);
+}
 
 # @param  SQL query
 # @returns  [ [col, col, ...], [...], ... ]

@@ -28,7 +28,7 @@ post '/' => sub {
             'rule' => [],
         }]);
     eval {
-        todo9::DB::add_todo($form->valid('todo'));
+        todo9::DB::dml("insert into $table (content, last_update) values (?, now())", [$form->valid('todo')]);
         $c->redirect('/');
     };
     if ($@) {
@@ -61,9 +61,8 @@ post '/todos/:id' => sub {
             'rule' => [],
         }]);
 
-    # FIXME: 例外使おう
     my $content = $form->valid('todo');
-    todo9::DB::edit_todo_by_id($id, $content);
+    todo9::DB::dml("update $table set content=? where id=$id", [$content]);
     $c->redirect('/');
 };
 
@@ -72,7 +71,7 @@ post '/todos/:id/delete' => sub {
     my ( $self, $c ) = @_;
 
     my $id = $c->args->{id};
-    todo9::DB::delete_todo_by_id($id);
+    todo9::DB::dml("delete from $table where id=$id", []);
     $c->redirect('/');
 };
 
