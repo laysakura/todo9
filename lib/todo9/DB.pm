@@ -79,4 +79,19 @@ sub fetch_todo_by_id {
     return @row;
 };
 
+# @param  id of row to fetch
+# @param  content
+# @returns  [id, todo, datetime], undef if not found
+sub edit_todo_by_id {
+    my $id = shift;
+    my $content = shift;
+    my $dbh = _get_dbh();
+    my $table = config->param('table');
+
+    _create_schema();
+
+    my $sth = $dbh->prepare("update $table set content=? where id=$id");
+    $sth->execute($content);
+};
+
 1;

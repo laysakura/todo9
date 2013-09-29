@@ -42,12 +42,32 @@ get '/todos/:id' => sub {
 
     my $id = $c->args->{id};
     my @todo = todo9::DB::fetch_todo_by_id($id) or die 'DB select error';
-    # die Dumper @todo;
+#    die Dumper $todo[1];
     $c->render('edit.tx',
                {
+                   id => $id,
                    content => $todo[1],
                    last_update => $todo[2],
                });
+};
+
+post '/todos/:id' => sub {
+    my ( $self, $c ) = @_;
+
+    my $id = $c->args->{id};
+
+    my $form = $c->req->validator([
+        'todo' => {
+            'rule' => [],
+        }]);
+
+    my $content = $form->valid('todo');
+    # die $content;
+
+    # FIXME: 例外使おう
+    my $content = $form->valid('todo');
+    todo9::DB::edit_todo_by_id($id, $content);
+    $c->redirect('/');
 };
 
 1;
