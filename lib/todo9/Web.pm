@@ -60,9 +60,6 @@ post '/todos/:id' => sub {
             'rule' => [],
         }]);
 
-    my $content = $form->valid('todo');
-    # die $content;
-
     # FIXME: 例外使おう
     my $content = $form->valid('todo');
     todo9::DB::edit_todo_by_id($id, $content);

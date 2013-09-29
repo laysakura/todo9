@@ -2,6 +2,20 @@
   ブラウザで動くTODOリスト．
 
 ** 使い方
+*** MySQL 5.1 に日本語全文検索機能を追加
+    参考: http://d.conma.me/entry/20100913/1284347235
+   #+BEGIN_SRC sh
+# mysqld は起動させておく
+sudo apt-get install mecab mecab-naist-jdic libmecab-dev
+wget http://sourceforge.net/projects/mysqlftppc/files/latest/download?source=files -O mysqlftppc-mecab-1.6.1.tar.gz
+tar xvf mysqlftppc-mecab-1.6.1.tar.gz
+cd mysqlftppc-mecab-1.6.1
+./configure --with-mysql-config=/path/to/mysql_config --with-mecab_config=/path/to/mecab-config
+make && sudo make install
+mysql -uroot -e "install plugin mecab soname 'libftmecab.so';"
+   #+END_SRC
+
+*** Webサービス立ち上げ
    #+BEGIN_SRC sh
 $ carton install
 $ vi lib/KossyMemoSample/Config.pm  # MySQL接続パラメータを設定
@@ -12,8 +26,12 @@ $ firefox localhost:5000
    #+END_SRC
 
 
+* データセット
+  http://cgi.members.interq.or.jp/mercury/p37/name/index.cgi?q=%E3%81%A8&gen=1
+  - 男性名 ('あ-と'まで)
+  - 女性名 ('な-わ'まで)
+
 * fixme
   *コードにも埋め込んでる*
-  - 空のTODOも入れられてしまう
   - edit.txでformタグが2つなのが超キモい
   - edit.txで，POSTでdeleteなinputを飛ばしてるのがキモい
