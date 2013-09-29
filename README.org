@@ -2,3 +2,4 @@
   *コードにも埋め込んでる*
   - 空のTODOも入れられてしまう
   - edit.txでformタグが2つなのが超キモい
+  - edit.txで，POSTでdeleteなinputを飛ばしてるのがキモい

@@ -94,4 +94,17 @@ sub edit_todo_by_id {
     $sth->execute($content);
 };
 
+# @param  id of row to delete
+# @returns  [id, todo, datetime], undef if not found
+sub delete_todo_by_id {
+    my $id = shift;
+    my $dbh = _get_dbh();
+    my $table = config->param('table');
+
+    _create_schema();
+
+    my $sth = $dbh->prepare("delete from $table where id=$id");
+    $sth->execute();
+};
+
 1;

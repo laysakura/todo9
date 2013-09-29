@@ -70,5 +70,14 @@ post '/todos/:id' => sub {
     $c->redirect('/');
 };
 
+# delete
+post '/todos/:id/delete' => sub {
+    my ( $self, $c ) = @_;
+
+    my $id = $c->args->{id};
+    todo9::DB::delete_todo_by_id($id);
+    $c->redirect('/');
+};
+
 1;
 
