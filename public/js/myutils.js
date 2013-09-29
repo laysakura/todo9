@@ -1,13 +1,14 @@
-$(function(){
-  $("#todo-box").bind("change keyup",function(){
+function noNullInputForm(id) {
+  var textbox = "#" + id + "-box";
+  var button = "#" + id + "-submit-btn";
+  $(textbox).bind("change keyup",function(){
     var count = $(this).val().length;
-    if (count > 0) $("#todo-submit-btn").attr('disabled', false);
-    else $("#todo-submit-btn").attr('disabled', true);
+    if (count > 0) $(button).attr('disabled', false);
+    else $(button).attr('disabled', true);
   });
+};
 
-  $("#search-box").bind("change keyup",function(){
-    var count = $(this).val().length;
-    if (count > 0) $("#search-submit-btn").attr('disabled', false);
-    else $("#search-submit-btn").attr('disabled', true);
-  });
+$(function(){
+  noNullInputForm("todo");
+  noNullInputForm("search");
 });

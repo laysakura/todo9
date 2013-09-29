@@ -38,3 +38,8 @@ $ firefox localhost:5000
   - SQLインジェクションし放題
   - 1件も検索結果が帰ってこないときにserver error
   - myutils.js がありえないほど冗長なコード
+
+* TODO
+  - 本気のbig dataつくる
+    - まず件数を見積もる
+    - data source の string変えるだけでtunaにつなげるように
