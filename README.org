@@ -37,9 +37,30 @@ $ firefox localhost:5000
   - edit.txで，POSTでdeleteなinputを飛ばしてるのがキモい
   - SQLインジェクションし放題
   - 1件も検索結果が帰ってこないときにserver error
-  - myutils.js がありえないほど冗長なコード
 
-* TODO
+* TODOs
+  - API作成
+    - テーブルを古山と相談したものに
+    - Perl API (検索結果の「何ページ目」「何個ずつ」ってのもユーザに渡してもらう)
+      #+BEGIN_SRC json
+{
+    "all_count": 780,
+    # "page_count": 20,
+    # "page": 3,
+    "results": { "id": 122, "content": "ほげほげ", ...}
+}
+      #+END_SRC
+    - Web API
+      - レスポンスのデータ構造は上に同じ
+  - bootstrapの btn, btn-primaryみたいなclassをもっと見出してUIをまともに
+  - 沢山のTODOを表示するための工夫
+    - / では，適当な数を表示し，プラスで「全部表示」みたいにする
+    - /search_result や /todos では，Googleみたいに20件ずつ表示みたいな
+    - とにかくどんな場合であろうと，perlのデータ構造に超多い件数のレコードが，ってことはないように
+      - リモートのDBサーバから転送する場合のコストを考える
+  - ページのタイトルやら日本語やらをもう少しまともにする
   - 本気のbig dataつくる
     - まず件数を見積もる
     - data source の string変えるだけでtunaにつなげるように
+  - 一致部分を赤くしたり
+    - 結果数件に対し LIKE '%hoge%' すりゃいい
