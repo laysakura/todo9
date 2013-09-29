@@ -85,13 +85,13 @@ get '/search_result' => sub {
     my $query = $opt->valid->get('q');
 
     my $todos = todo9::DB::fetch_todos_by_query($query, 10000) or die 'DB select error';
+    die Dumper $todos;
     $c->render('search_result.tx',
                {
                    query => $query,
-                   len_results => $todos->[-1],
+                   len_results => @$todos,
                    todos => $todos,
                });
 };
 
 1;
-

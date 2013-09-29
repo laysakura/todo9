@@ -4,12 +4,12 @@
 
 <form action="/" method="post">
   <input type="text" id="todo-box" name="todo" placeholder="TODOを記述" />
-  <input id="todo-submit-btn" name="submit-btn" type="submit" value="保存" disabled="true" />
+  <input id="todo-submit-btn" name="submit-btn" class="btn btn-primary" type="submit" value="保存" disabled="true" />
 </form>
 
 <form action="/search_result" method="get">
   <input type="text" id="search-box" name="q" placeholder="検索" />
-  <input id="search-submit-btn" name="submit-btn" type="submit" value="検索" disabled="true" />
+  <input id="search-submit-btn" name="submit-btn" class="btn" type="submit" value="検索" disabled="true" />
 </form>
 
 
