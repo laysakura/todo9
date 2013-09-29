@@ -1,7 +1,6 @@
 : cascade base
 : around content -> {
-<h1>kossy-memo-sample</h1>
-<p>保存できるメモ帳です．次回アクセス時にあなたのメモが見られるとは限りません :P</p>
+<h1>TODOリスト</h1>
 
 <form action="/" method="post">
   <input type="text" id="todo-box" name="todo" placeholder="TODOを記述" />
