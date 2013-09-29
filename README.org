@@ -35,3 +35,6 @@ $ firefox localhost:5000
   *コードにも埋め込んでる*
   - edit.txでformタグが2つなのが超キモい
   - edit.txで，POSTでdeleteなinputを飛ばしてるのがキモい
+  - SQLインジェクションし放題
+  - 1件も検索結果が帰ってこないときにserver error
+  - myutils.js がありえないほど冗長なコード

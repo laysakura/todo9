@@ -7,6 +7,11 @@
   <input id="todo-submit-btn" name="submit-btn" type="submit" value="保存" disabled="true" />
 </form>
 
+<form action="/search_result" method="get">
+  <input type="text" id="search-box" name="q" placeholder="検索" />
+  <input id="search-submit-btn" name="submit-btn" type="submit" value="検索" disabled="true" />
+</form>
+
 
 <ol>
 : for $todos -> $todo {
