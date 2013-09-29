@@ -4,10 +4,15 @@
 <p>保存できるメモ帳です．次回アクセス時にあなたのメモが見られるとは限りません :P</p>
 
 <form action="/" method="post">
-  <textarea name="memo-area"><: $memo_content :></textarea>
+  <input type="text" name="todo" placeholder="TODOを記述" />
   <input name="submit-btn" type="submit" value="保存" />
 </form>
 
-<p>最終更新: <: $last_update :></p>
+
+<ol>
+: for $todos -> $todo {
+      <li><span><: $todo[0] :></span>　<span><: $todo[1] :></span>　<span><: $todo[2] :></span></li>
+: }
+</ol>
 
 : }

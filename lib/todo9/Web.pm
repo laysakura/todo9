@@ -5,17 +5,17 @@ use warnings;
 use utf8;
 use Kossy;
 use todo9::DB;
+use Data::Dumper;
 use todo9::Config;
 
 
 get '/' => sub {
     my ( $self, $c )  = @_;
 
-    my $db = todo9::DB::read_memo();
+    my $todos = todo9::DB::read_todos(10) or die 'DB select error';
     $c->render('index.tx',
                {
-                   memo_content => $db->{content},
-                   last_update => $db->{last_update},
+                   todos => $todos,
                });
 };
 
@@ -23,11 +23,11 @@ post '/' => sub {
     my ( $self, $c ) = @_;
 
     my $form = $c->req->validator([
-        'memo-area' => {
+        'todo' => {
             'rule' => [],
         }]);
     eval {
-        todo9::DB::save_memo($form->valid('memo-area'));
+        todo9::DB::add_todo($form->valid('todo'));
         $c->redirect('/');
     };
     if ($@) {
