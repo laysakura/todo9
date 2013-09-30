@@ -1,22 +1,16 @@
 : cascade base
 : around content -> {
-<h1>TODOリスト</h1>
+<h1><: $greeting :> <: $c.stash.site_name :></h1>
 
-<form action="/" method="post">
-  <input type="text" id="todo-box" name="todo" placeholder="TODOを記述" />
-  <input id="todo-submit-btn" name="submit-btn" class="btn btn-primary" type="submit" value="保存" disabled="true" />
+<form id="add">
+  <table border="1"><tr><td style="width:100px;padding:4px">
+  <!-- <input name="importance" type="range" style="width:100px"/></td><td> -->
+  <input name="content" type="textarea" placeholder="content" onKeyPress="return addEnter(event);"/></td><td>
+  <input type="button" value="追加" onClick="addPost('<: $c.req.uri_for('create') :>')"/>
+  </td></tr></table>
 </form>
 
-<form action="/search_result" method="get">
-  <input type="text" id="search-box" name="q" placeholder="検索" />
-  <input id="search-submit-btn" name="submit-btn" class="btn" type="submit" value="検索" disabled="true" />
-</form>
-
-
-<ol>
-: for $todos -> $todo {
-      <li><a href="/todos/<: $todo.id :>"><: $todo.content :></a></li>
-: }
-</ol>
+<div id="task_list">
+</div>
 
 : }

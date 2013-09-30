@@ -16,14 +16,64 @@ my $dbh = DBI->connect(
 ) or die 'connection failed:';
 
 
+sub getTable{
+    my $rows = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table");
+	my $tool_tips = "";
+	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr>  <!-- <th style=\"border:solid #000000 1px;width:100px\">重要性</th>  --> <th style=\"border:solid #000000 1px\">内容</th>  <!-- <th style=\"border:solid #000000 1px\">状態</th> -->  <th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
+	foreach my $data (@$rows){
+		# my $decode_content = decode('UTF-8', $data->{content});
+		my $decode_content = $data->{content};
+		my $id = $data->{id};
+############################################################################################
+        $return_text .=<<EOF;
+<tr>
+	<!-- <td id="importance_edit$id" style="text-align:center;font-size:15px;vertical-align:middle"><input type="range" value="$data->{importance}" style="width:100px" onMouseUp="editPostSlider('edit', $id, 'importance', this.value)"><div id="importance_num$id" style="display:none">$data->{importance}</div></td> -->
+	<td id="content_edit$id" onClick="displayTips($id, 'content')" style="font-size:15px;vertical-align:middle">$decode_content</td>
+	<td style="font-size:15px;vertical-align:middle">$data->{last_update}</td>
+	<td><input type="button" value="削除" onClick="deletePost('delete', $id)" style="height:30px"></td>
+</td></tr>
+EOF
+############################################################################################
+        $tool_tips .=<<EOF;
+<div class="tips" id="content_tips$id" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
+  <form id='edit_content_commit$id'>
+	<table><tr><td>
+	<input name='content' type='textarea' value='$decode_content' onKeyPress='return editEnter(event, $id, "content")'>
+	</td></tr><tr><td>
+	<input type="button" value="決定" onClick="editPost('edit', $id, 'content')">
+	<input type="button" value="閉じる" onClick="\$('#content_tips$id').hide()">
+	</td></tr></table>
+  </form>
+</div>
+<div class="tips" id="importance_tips$id" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
+  <form id='edit_importance_commit$id'>
+	<table><tr><td>
+	<input name='content' type='textarea' value='$data->{importance}' onKeyPress='return editEnter(event, $id, "importance")' style="width:30px">
+	</td></tr><tr><td>
+	<input type="button" value="決定" onClick="editPost('edit', $id, 'importance')">
+	<input type="button" value="閉じる" onClick="\$('#importance_tips$id').hide()">
+	</td></tr></table>
+  </form>
+</div>
+EOF
+############################################################################################
+	}
+	$return_text .= "</table>";
+
+	$return_text .= $tool_tips;
+	return $return_text;
+}
+
 get '/' => sub {
     my ( $self, $c )  = @_;
 
-    my $todos = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table limit 10");
-    $c->render('index.tx',
-               {
-                   todos => $todos,
-               });
+	$c->render('index.tx', {
+		greeting => "Todo9!",
+    });
+};
+
+get '/table' => sub {
+	return getTable();
 };
 
 post '/' => sub {
@@ -44,41 +94,75 @@ post '/' => sub {
     return $c->res;
 };
 
-get '/todos/:id' => sub {
-    my ( $self, $c ) = @_;
+post '/create' => sub {
+	my ($self, $c) = @_;
+	my $result = $c->req->validator([
+		'content' => {
+			rule => [
+				['NOT_NULL', 'empty body'],
+			],
+		},
+	]);
 
-    my $id = $c->args->{id};
-    my $todos = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table where id=$id limit 1");
-    $c->render('edit.tx',
-               {
-                   id => $id,
-                   content => $todos->[0]{content},
-                   last_update => $todos->[0]{last_update},
-               });
+	if($result->has_error){
+		return $c->render_json({error=>1, messages=>$result->errors});
+	}
+
+	my $content = $result->valid('content');
+    Todonize::Plugin::Fulltext::DB::dml($dbh, "insert into $table (content, last_update) values (?, now())", [$result->valid('content')]);
+
+	return getTable();
 };
 
-post '/todos/:id' => sub {
-    my ( $self, $c ) = @_;
+post '/delete' => sub {
+	my ($self, $c) = @_;
+	my $result = $c->req->validator([
+		'id' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		}
+	]);
 
-    my $id = $c->args->{id};
+	if($result->has_error){
+		return $c->render_json({error=>1, messages=>$result->errors});
+	}
 
-    my $form = $c->req->validator([
-        'todo' => {
-            'rule' => [],
-        }]);
-
-    my $content = $form->valid('todo');
-    Todonize::Plugin::Fulltext::DB::dml($dbh, "update $table set content=? where id=$id", [$content]);
-    $c->redirect('/');
-};
-
-# delete
-post '/todos/:id/delete' => sub {
-    my ( $self, $c ) = @_;
-
-    my $id = $c->args->{id};
+	my $id = $result->valid('id');
     Todonize::Plugin::Fulltext::DB::dml($dbh, "delete from $table where id=$id", []);
-    $c->redirect('/');
+
+	return getTable;
+};
+
+post '/edit' => sub {
+	my ($self, $c) = @_;
+	my $result = $c->req->validator([
+		'id' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		},
+		'content' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		},
+		'columnname' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		},
+	]);
+
+	if($result->has_error){
+		return $c->render_json({error=>1, messages=>$result->errors});
+	}
+
+	my $id = $result->valid('id');
+	my $content = $result->valid('content');
+    Todonize::Plugin::Fulltext::DB::dml($dbh, "update $table set content=?, last_update=now() where id=$id", [$result->valid('content')]);
+
+	return getTable;
 };
 
 get '/search_result' => sub {
