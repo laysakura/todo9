@@ -31,7 +31,7 @@ sub getTable{
 	<!-- <td id="importance_edit$id" style="text-align:center;font-size:15px;vertical-align:middle"><input type="range" value="$data->{importance}" style="width:100px" onMouseUp="editPostSlider('edit', $id, 'importance', this.value)"><div id="importance_num$id" style="display:none">$data->{importance}</div></td> -->
 	<td id="content_edit$id" onClick="displayTips($id, 'content')" style="font-size:15px;vertical-align:middle">$decode_content</td>
 	<td style="font-size:15px;vertical-align:middle">$data->{last_update}</td>
-	<td><input type="button" value="削除" onClick="deletePost('delete', $id)" style="height:30px"></td>
+	<td><input type="button" class="btn-danger" value="削除" onClick="deletePost('delete', $id)" style="height:30px"></td>
 </td></tr>
 EOF
 ############################################################################################

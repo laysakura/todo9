@@ -1,12 +1,12 @@
 : cascade base
 : around content -> {
-<h1><: $greeting :> <: $c.stash.site_name :></h1>
+<h1>TODOリスト</h1>
 
 <form id="add">
   <table border="1"><tr><td style="width:100px;padding:4px">
   <!-- <input name="importance" type="range" style="width:100px"/></td><td> -->
-  <input name="content" type="textarea" placeholder="content" onKeyPress="return addEnter(event);"/></td><td>
-  <input type="button" value="追加" onClick="addPost('<: $c.req.uri_for('create') :>')"/>
+  <input name="content" type="textarea" placeholder="TODOの追加" onKeyPress="return addEnter(event);"/></td><td>
+  <input type="button" class="btn-primary" value="追加" onClick="addPost('<: $c.req.uri_for('create') :>')"/>
   </td></tr></table>
 </form>
 
@@ -14,7 +14,7 @@
   <table border="1"><tr><td style="width:100px;padding:4px">
   <!-- <input name="importance" type="range" style="width:100px"/></td><td> -->
   <input id="search-box" name="content" type="textarea" placeholder="検索クエリ" onKeyPress="return searchEnter(event);"/></td><td>
-  <input type="button" value="検索" onClick="searchGet('<: $c.req.uri_for('search_result') :>')"/>
+  <input type="button" class="btn" value="検索" onClick="searchGet('<: $c.req.uri_for('search_result') :>')"/>
   </td></tr></table>
 </form>
 

@@ -26,8 +26,6 @@ body {
 <a class="brand" href="<: $c.req.uri_for('/') :>">todo9</a>
 <div class="nav-collapse">
 <ul class="nav">
-<li class="active"><a href="<: $c.req.uri_for('/') :>">Home</a></li>
-<li><a href="#list">list</a></li>
 </ul>
 </div> <!--/.nav-collapse -->
 </div>
