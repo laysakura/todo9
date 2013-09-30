@@ -15,12 +15,13 @@ my $dbh = DBI->connect(
     { mysql_enable_utf8 => 1 }
 ) or die 'connection failed:';
 
-my $fullscan_sql = "select * from $table";
+my $fullscan_sql = "select * from $table limit 20";
 my $rows;
 
 sub getTable{
+    my $t = shift;
 	my $tool_tips = "";
-	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr>  <!-- <th style=\"border:solid #000000 1px;width:100px\">重要性</th>  --> <th style=\"border:solid #000000 1px\">内容</th>  <!-- <th style=\"border:solid #000000 1px\">状態</th> -->  <th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
+	my $return_text = "<input id='sectimeFrom' type='hidden' value=\"$t\" />   <table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr>  <!-- <th style=\"border:solid #000000 1px;width:100px\">重要性</th>  --> <th style=\"border:solid #000000 1px\">内容</th>  <!-- <th style=\"border:solid #000000 1px\">状態</th> -->  <th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
 	foreach my $data (@$rows){
 		# my $decode_content = decode('UTF-8', $data->{content});
 		my $decode_content = $data->{content};
@@ -71,12 +72,13 @@ get '/' => sub {
     $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
 
 	$c->render('index.tx', {
-		greeting => "Todo9!",
+        n_disp => 20,
+        query_time => sprintf("%0.2f", 0.0),
     });
 };
 
 get '/table' => sub {
-	return getTable($rows);
+	return getTable(0.0);
 };
 
 post '/' => sub {
@@ -115,7 +117,7 @@ post '/create' => sub {
     Todonize::Plugin::Fulltext::DB::dml($dbh, "insert into $table (content, last_update) values (?, now())", [$result->valid('content')]);
 
     $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
-	return getTable($rows);
+	return getTable(0.0);
 };
 
 post '/delete' => sub {
@@ -136,7 +138,7 @@ post '/delete' => sub {
     Todonize::Plugin::Fulltext::DB::dml($dbh, "delete from $table where id=$id", []);
 
     $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
-	return getTable($rows);
+	return getTable(0.0);
 };
 
 post '/edit' => sub {
@@ -168,10 +170,10 @@ post '/edit' => sub {
     Todonize::Plugin::Fulltext::DB::dml($dbh, "update $table set content=?, last_update=now() where id=$id", [$result->valid('content')]);
 
     $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
-	return getTable($rows);
+	return getTable(0.0);
 };
 
-get '/search_result' => sub {
+post '/search_result' => sub {
     my ( $self, $c )  = @_;
 
     my $opt = $c->req->validator([
@@ -180,11 +182,27 @@ get '/search_result' => sub {
         }]);
     my $query = $opt->valid->get('q');
 
-    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table where match(content) against('+\"$query\"' in boolean mode) limit 20");
+    my $start = Time::HiRes::time;
+    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table where match(content) against('+\"$query\"' in boolean mode)");
+    my $end = Time::HiRes::time;
 
-	$c->render('index.tx', {
-		greeting => "Todo9!",
-    });
+    return getTable(sprintf("%0.2f",  $end - $start));
+};
+
+post '/like_search_result' => sub {
+    my ( $self, $c )  = @_;
+
+    my $opt = $c->req->validator([
+        'q' => {
+            rule => [],
+        }]);
+    my $query = $opt->valid->get('q');
+
+    my $start = Time::HiRes::time;
+    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table where content like '%$query%'");
+    my $end = Time::HiRes::time;
+
+    return getTable(sprintf("%0.2f", $end - $start));
 };
 
 1;

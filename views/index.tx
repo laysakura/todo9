@@ -2,6 +2,8 @@
 : around content -> {
 <h1>TODOリスト</h1>
 
+<span style="font-size:30px; color:#ee1111;">8,000,000</span>件中 <: $n_disp :>件
+
 <form id="add">
   <table border="1"><tr><td style="width:100px;padding:4px">
   <!-- <input name="importance" type="range" style="width:100px"/></td><td> -->
@@ -13,8 +15,16 @@
 <form id="search">
   <table border="1"><tr><td style="width:100px;padding:4px">
   <!-- <input name="importance" type="range" style="width:100px"/></td><td> -->
-  <input id="search-box" name="content" type="textarea" placeholder="検索クエリ" onKeyPress="return searchEnter(event);"/></td><td>
-  <input type="button" class="btn" value="検索" onClick="searchGet('<: $c.req.uri_for('search_result') :>')"/>
+  <input id="search-box" name="content" type="textarea" placeholder="検索クエリ" /></td><td>
+  <input type="button" class="btn" value="全文検索" onClick="searchGet('<: $c.req.uri_for('search_result') :>')"/>
+  </td></tr></table>
+</form>
+
+<form id="like-search">
+  <table border="1"><tr><td style="width:100px;padding:4px">
+  <!-- <input name="importance" type="range" style="width:100px"/></td><td> -->
+  <input id="like-search-box" name="content" type="textarea" placeholder="検索クエリ" /></td><td>
+  <input type="button" class="btn" value="LIKE %検索%" onClick="likeSearchGet('<: $c.req.uri_for('like_search_result') :>')"/>
   </td></tr></table>
 </form>
 

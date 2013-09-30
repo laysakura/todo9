@@ -30,3 +30,4 @@ $ firefox localhost:5000
 * TODOs
   - SQLインジェクションし放題
   - 1件も検索結果が帰ってこないときにserver error
+  - 複数語のAND, OR検索
