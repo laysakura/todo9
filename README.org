@@ -1,5 +1,11 @@
-* kossy-memo-sample
+* todo9
   ブラウザで動くTODOリスト．
+
+** 諸注意
+   このプロダクトは addsict と共同開発した Todonize モジュールに依存しています．
+   特に，自分の開発のメインであったTODOの全文検索機能は Todonize::Plugin::Fulltext モジュールに依存しており，これは100%自分の制作物です．
+
+   つまり， addsict が拡張可能なTODO機能を提供する基盤を整え，自分がその上で Todonize::Plugin::Fulltext モジュールを作成しました．
 
 ** 使い方
 *** MySQL 5.1 に日本語全文検索機能を追加

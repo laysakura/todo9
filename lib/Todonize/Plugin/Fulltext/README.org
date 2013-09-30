@@ -1,0 +1,35 @@
+* Todonize::Plugin::Fulltext
+  Todonizeに全文検索機能を追加するプラグイン
+
+** Usage
+*** MySQL 5.1 に日本語全文検索機能を追加
+    参考: http://d.conma.me/entry/20100913/1284347235
+   #+BEGIN_SRC sh
+$ ## mysqld は起動させておく
+$ sudo apt-get install mecab mecab-naist-jdic libmecab-dev
+$ wget http://sourceforge.net/projects/mysqlftppc/files/latest/download?source=files -O mysqlftppc-mecab-1.6.1.tar.gz
+$ tar xvf mysqlftppc-mecab-1.6.1.tar.gz
+$ cd mysqlftppc-mecab-1.6.1
+$ ./configure --with-mysql-config=/path/to/mysql_config --with-mecab_config=/path/to/mecab-config
+$ make && sudo make install
+$ mysql -uroot -e "install plugin mecab soname 'libftmecab.so';"
+   #+END_SRC
+
+*** Todonize::Plugin::Fulltextの使用準備
+  #+BEGIN_SRC sh
+$ mysql -u [user] -p [db] < init.sql
+  #+END_SRC
+
+*** 使ってみる
+    See:
+    - API.pmのsearch関数の @example セクション
+    - t/01.t
+
+** Test
+   #+BEGIN_SRC sh
+$ mysql -u [user] -p [db] < t/init.sql
+$ prove -I/path/to/todo9 t/*.t
+   #+END_SRC
+
+** TODOs
+   - Todonize::Plugin::Fulltext::API::search() のSQLインジェクション対策

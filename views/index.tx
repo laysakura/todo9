@@ -15,7 +15,7 @@
 
 <ol>
 : for $todos -> $todo {
-      <li><a href="/todos/<: $todo[0] :>"><: $todo[1] :></a></li>
+      <li><a href="/todos/<: $todo.id :>"><: $todo.content :></a></li>
 : }
 </ol>
 
