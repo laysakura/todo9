@@ -1,25 +1,21 @@
 * todo9
   ブラウザで動くTODOリスト．
 
-** 諸注意
-   このプロダクトは addsict と共同開発した Todonize モジュールに依存しています．
-   特に，自分の開発のメインであったTODOの全文検索機能は Todonize::Plugin::Fulltext モジュールに依存しており，これは100%自分の制作物です．
-
-   つまり， addsict が拡張可能なTODO機能を提供する基盤を整え，自分がその上で Todonize::Plugin::Fulltext モジュールを作成しました．
+** 自分のやったこと
+   - addsictのフレームワーク Todonize の上で Todonize::Plugin::Fulltext モジュールを開発．
+     TODOの全文検索を実現するもの．
+     - https://github.com/addsict/todo9/tree/master/framework/Todonize/lib/Todonize/Plugin/Fulltext のものが
+       lib/Todonize/Plugin/Fulltext に入ってます．
+   - malt03のUIと統合し，まともな見た目をゲット．
+     - https://github.com/laysakura/todo9/tree/ui
+   - 自分でも最低限のUIを持ったTODOリストは作成している．Web.pm がすっきりしていて読みやすい．
+     - https://github.com/laysakura/todo9
 
 ** 使い方
-*** MySQL 5.1 に日本語全文検索機能を追加
-    参考: http://d.conma.me/entry/20100913/1284347235
-   #+BEGIN_SRC sh
-# mysqld は起動させておく
-sudo apt-get install mecab mecab-naist-jdic libmecab-dev
-wget http://sourceforge.net/projects/mysqlftppc/files/latest/download?source=files -O mysqlftppc-mecab-1.6.1.tar.gz
-tar xvf mysqlftppc-mecab-1.6.1.tar.gz
-cd mysqlftppc-mecab-1.6.1
-./configure --with-mysql-config=/path/to/mysql_config --with-mecab_config=/path/to/mecab-config
-make && sudo make install
-mysql -uroot -e "install plugin mecab soname 'libftmecab.so';"
-   #+END_SRC
+*** Todonize::Plugin::Fulltext モジュールを使えるようにする
+    See: https://github.com/addsict/todo9/tree/master/framework/Todonize/lib/Todonize/Plugin/Fulltext
+
+    ただし，lib/Todonize/Plugin/Fulltext にファイルがあるので上記URLからcloneする必要はありません．
 
 *** Webサービス立ち上げ
    #+BEGIN_SRC sh
@@ -31,49 +27,7 @@ $ carton exec -- plackup -r -E production app.psgi
 $ firefox localhost:5000
    #+END_SRC
 
-
-* データセット
-  http://cgi.members.interq.or.jp/mercury/p37/name/index.cgi?q=%E3%81%A8&gen=1
-  - 男性名 ('あ-と'まで)
-  - 女性名 ('な-わ'まで)
-
-* fixme
-  *コードにも埋め込んでる*
-  - edit.txでformタグが2つなのが超キモい
-  - edit.txで，POSTでdeleteなinputを飛ばしてるのがキモい
+* TODOs
   - SQLインジェクションし放題
   - 1件も検索結果が帰ってこないときにserver error
-
-* TODOs
-  - [X] API作成
-    - [X] テーブルを古山と相談したものに
-    - [X] Perl API (検索結果の「何ページ目」「何個ずつ」ってのもユーザに渡してもらう)
-      #+BEGIN_SRC json
-{
-    "all_count": 780,
-    # "page_count": 20,
-    # "page": 3,
-    "results": { "id": 122, "content": "ほげほげ", ...}
-}
-      #+END_SRC
-    - [X] ドキュメント業
-  - [ ] 自分のtodo9をfuruyamaプラグインを使う形に
-  - bootstrapの btn, btn-primaryみたいなclassをもっと見出してUIをまともに
-  - [ ] 沢山のTODOを表示するための工夫
-    - [ ] / では，適当な数を表示し，プラスで「全部表示」みたいにする
-    - [ ] /search_result や /todos では，Googleみたいに20件ずつ表示みたいな
-    - [ ] とにかくどんな場合であろうと，perlのデータ構造に超多い件数のレコードが，ってことはないように
-      - [ ] リモートのDBサーバから転送する場合のコストを考える
-  - ページのタイトルやら日本語やらをもう少しまともにする
-  - [-] 本気のbig dataつくる
-    - [X] まず件数を見積もる
-    - [ ] tunaでmysql5.1 + fulltext使えるように
-    - [ ] サイズどのくらいだと素早く検索終わるか検証
-    - [ ] LIKE % と比べてみる
-    - [ ] data source の string変えるだけでtunaにつなげるように
-  - 一致部分を赤くしたり
-    - 結果数件に対し LIKE '%hoge%' すりゃいい
-  - <form> 排してjQueryのXHRでぬるぬるPOST
-  - 古山案件
-    - ストレージエンジン，初期DB設定の自動化
-    - Fulltextモジュールの作成
+  - 複数語のAND, OR検索
