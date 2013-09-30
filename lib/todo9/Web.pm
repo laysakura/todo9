@@ -15,9 +15,10 @@ my $dbh = DBI->connect(
     { mysql_enable_utf8 => 1 }
 ) or die 'connection failed:';
 
+my $fullscan_sql = "select * from $table";
+my $rows;
 
 sub getTable{
-    my $rows = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table");
 	my $tool_tips = "";
 	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr>  <!-- <th style=\"border:solid #000000 1px;width:100px\">重要性</th>  --> <th style=\"border:solid #000000 1px\">内容</th>  <!-- <th style=\"border:solid #000000 1px\">状態</th> -->  <th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
 	foreach my $data (@$rows){
@@ -67,13 +68,15 @@ EOF
 get '/' => sub {
     my ( $self, $c )  = @_;
 
+    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
+
 	$c->render('index.tx', {
 		greeting => "Todo9!",
     });
 };
 
 get '/table' => sub {
-	return getTable();
+	return getTable($rows);
 };
 
 post '/' => sub {
@@ -111,7 +114,8 @@ post '/create' => sub {
 	my $content = $result->valid('content');
     Todonize::Plugin::Fulltext::DB::dml($dbh, "insert into $table (content, last_update) values (?, now())", [$result->valid('content')]);
 
-	return getTable();
+    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
+	return getTable($rows);
 };
 
 post '/delete' => sub {
@@ -131,7 +135,8 @@ post '/delete' => sub {
 	my $id = $result->valid('id');
     Todonize::Plugin::Fulltext::DB::dml($dbh, "delete from $table where id=$id", []);
 
-	return getTable;
+    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
+	return getTable($rows);
 };
 
 post '/edit' => sub {
@@ -162,7 +167,8 @@ post '/edit' => sub {
 	my $content = $result->valid('content');
     Todonize::Plugin::Fulltext::DB::dml($dbh, "update $table set content=?, last_update=now() where id=$id", [$result->valid('content')]);
 
-	return getTable;
+    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, $fullscan_sql);
+	return getTable($rows);
 };
 
 get '/search_result' => sub {
@@ -174,13 +180,11 @@ get '/search_result' => sub {
         }]);
     my $query = $opt->valid->get('q');
 
-    my $todos = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table where match(content) against('+\"$query\"' in boolean mode) limit 20");
-    $c->render('search_result.tx',
-               {
-                   query => $query,
-                   len_results => scalar(@{$todos}),
-                   todos => $todos,
-               });
+    $rows = Todonize::Plugin::Fulltext::DB::select($dbh, "select * from $table where match(content) against('+\"$query\"' in boolean mode) limit 20");
+
+	$c->render('index.tx', {
+		greeting => "Todo9!",
+    });
 };
 
 1;

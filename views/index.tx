@@ -10,6 +10,14 @@
   </td></tr></table>
 </form>
 
+<form id="search">
+  <table border="1"><tr><td style="width:100px;padding:4px">
+  <!-- <input name="importance" type="range" style="width:100px"/></td><td> -->
+  <input id="search-box" name="content" type="textarea" placeholder="検索クエリ" onKeyPress="return searchEnter(event);"/></td><td>
+  <input type="button" value="検索" onClick="searchGet('<: $c.req.uri_for('search_result') :>')"/>
+  </td></tr></table>
+</form>
+
 <div id="task_list">
 </div>
 
